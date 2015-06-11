@@ -4,12 +4,20 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.text.style.BulletSpan;
+import android.util.Log;
 import android.view.Menu;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.AlphaAnimation;
+import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,7 +25,7 @@ import android.widget.Toast;
 public class MainActivity extends Activity {
 	
 	public TextView tv_splash_version;
-	
+	public RelativeLayout rl_splash;
 	
 	
 	//定义常亮
@@ -44,6 +52,12 @@ public class MainActivity extends Activity {
 		
 		this.init();
 		
+		AlphaAnimation aa = new AlphaAnimation(0.3f,1.0f);
+		aa.setDuration(2000);
+		rl_splash.setAnimation(aa);
+		
+		//链接服务器，获取配置信息
+		
 		
 		
 	}
@@ -51,6 +65,7 @@ public class MainActivity extends Activity {
 	private void init() {
 		// TODO Auto-generated method stub
 		tv_splash_version = (TextView) findViewById(R.id.tv_splash_version);
+		rl_splash = (RelativeLayout) findViewById(R.id.rl_splash);
 		tv_splash_version.setText("版本号:"+getVersion());
 	}
 
@@ -80,10 +95,13 @@ public class MainActivity extends Activity {
 			    	String serverPackageVersion = "";
 			    	if(currentPackageVersion.equals(serverPackageVersion)){
 			    		//是最新版本
-			    		
+			    		Log.i(TAG, "版本号相同，进入主界面");
 			    	}else{
 			    		//非最新版本
 			    		 Toast.makeText(getApplicationContext(), "有最新版本号了哦。", Toast.LENGTH_SHORT).show();
+			    		 //让用户选择是否去升级。
+			    		 Log.i(TAG, "版本号不同，升级对话框。");
+			    		 this.showUpdateDialog();
 			    	}
 			    	break;
 			    case SERVER_ERROR :
@@ -105,6 +123,35 @@ public class MainActivity extends Activity {
 			    	break;
 			 }
 		 }
+
+		private void showUpdateDialog() {
+			// TODO Auto-generated method stub
+//			AlertDialog alertDialog = new AlertDialog()
+			//创建builder
+			Builder builder = new Builder(getApplicationContext());
+			//设置参数
+			builder.setIcon(R.drawable.bg);
+			builder.setTitle("提示");
+			builder.setMessage("已经发布新版本，您需要更新吗？");
+			builder.setPositiveButton("", new OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					// TODO Auto-generated method stub
+					
+				}
+			});
+			
+			builder.setNegativeButton("", new OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					// TODO Auto-generated method stub
+					
+				}
+			});
+			//创建并显示
+			builder.create().show();
+		}
 	};
 
 //	@Override
